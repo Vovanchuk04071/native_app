@@ -27,13 +27,14 @@ export const LoginScreen = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isViewPassword, setIsViewPassword] = useState(true);
   const [state, setState] = useState(initialState);
-  const [dimensions, setDimensions] = useState(Dimensions.get('window').width + 2);
+  const [dimensions, setDimensions] = useState({ width: Dimensions.get('window').width - 15 * 2 });
   const [activeField, setActiveField] = useState<Fields>(null);
 
   useEffect(() => {
     const onChange = () => {
-      const width = Dimensions.get('window').width + 5 * 2;
-      setDimensions(width);
+      const width = Dimensions.get('window').width - 15 * 2;
+
+      setDimensions({ width });
     };
     const subscription = Dimensions.addEventListener('change', onChange);
 
@@ -53,18 +54,21 @@ export const LoginScreen = () => {
     setIsShowKeyboard(true);
   };
 
+  const submitForm = () => {
+    console.log(state);
+    hideKeyboard();
+    setState(initialState);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={hideKeyboard}>
       <View style={styles.container}>
         <ImageBackground source={require('../assets/images/background.jpg')} style={styles.image}>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <View
-              style={{
-                ...styles.loginWrap,
-                marginBottom: isShowKeyboard ? -240 : 0,
-                width: dimensions,
-              }}
-            >
+          <KeyboardAvoidingView
+            style={styles.loginWrap}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <View style={{ width: dimensions.width, marginBottom: isShowKeyboard ? -240 : 0 }}>
               <View style={styles.header}>
                 <Text style={styles.title}>Увійти</Text>
               </View>
@@ -112,7 +116,7 @@ export const LoginScreen = () => {
                 )}
               </View>
               <View style={{ marginTop: 30 }}>
-                <TouchableOpacity style={styles.login}>
+                <TouchableOpacity style={styles.login} activeOpacity={0.7} onPress={submitForm}>
                   <Text style={styles.loginTitle}>Увійти</Text>
                 </TouchableOpacity>
               </View>
@@ -145,6 +149,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     position: 'relative',
+    width: '100%',
+    alignItems: 'center',
   },
   header: {
     alignItems: 'center',
@@ -163,7 +169,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     height: 50,
-    marginHorizontal: 16,
     paddingHorizontal: 16,
     position: 'relative',
   },

@@ -35,13 +35,13 @@ export const RegistrationScreen = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isViewPassword, setIsViewPassword] = useState(true);
   const [state, setState] = useState(initialState);
-  const [dimensions, setDimensions] = useState(Dimensions.get('window').width + 2);
+  const [dimensions, setDimensions] = useState({ width: Dimensions.get('window').width - 15 * 2 });
   const [activeField, setActiveField] = useState<Fields>(null);
 
   useEffect(() => {
     const onChange = () => {
-      const width = Dimensions.get('window').width + 5 * 2;
-      setDimensions(width);
+      const width = Dimensions.get('window').width - 15 * 2;
+      setDimensions({ width });
     };
     const subscription = Dimensions.addEventListener('change', onChange);
 
@@ -93,12 +93,14 @@ export const RegistrationScreen = () => {
           source={require('../assets/images/background.jpg')}
           style={styles.imageBackground}
         >
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <KeyboardAvoidingView
+            style={styles.registryContainer}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
             <View
               style={{
-                ...styles.registryContainer,
+                width: dimensions.width,
                 marginBottom: isShowKeyboard ? -190 : 0,
-                width: dimensions,
               }}
             >
               <View
@@ -232,6 +234,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     position: 'relative',
+    width: '100%',
+    alignItems: 'center',
   },
   header: {
     alignItems: 'center',
@@ -250,7 +254,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     height: 50,
-    marginHorizontal: 16,
     paddingHorizontal: 16,
     position: 'relative',
   },
