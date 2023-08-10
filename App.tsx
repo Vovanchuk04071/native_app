@@ -1,8 +1,10 @@
-import { RegistrationScreen } from './Screens/RegistrationScreen';
 import * as Font from 'expo-font';
 import React, { useState } from 'react';
 import AppLoading from 'expo-app-loading';
-import { LoginScreen } from './Screens/LoginScreen';
+
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+
+import { useRoute } from './router';
 
 const loadApplication = async () =>
   await Font.loadAsync({
@@ -24,5 +26,17 @@ export default function App() {
     );
   }
 
-  return <RegistrationScreen />;
+  return (
+    <NavigationContainer
+      theme={{
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: '#fff',
+        },
+      }}
+    >
+      {useRoute(true)}
+    </NavigationContainer>
+  );
 }

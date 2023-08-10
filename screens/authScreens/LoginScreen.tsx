@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   Keyboard,
   Platform,
-  Dimensions,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { useDimensions } from '../../hooks/useDimensions';
 
 enum Fields {
   Email = 'email',
@@ -23,25 +23,13 @@ const initialState = {
   [Fields.Password]: '',
 };
 
-export const LoginScreen = () => {
+export const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isViewPassword, setIsViewPassword] = useState(true);
   const [state, setState] = useState(initialState);
-  const [dimensions, setDimensions] = useState({ width: Dimensions.get('window').width - 15 * 2 });
   const [activeField, setActiveField] = useState<Fields>(null);
 
-  useEffect(() => {
-    const onChange = () => {
-      const width = Dimensions.get('window').width - 15 * 2;
-
-      setDimensions({ width });
-    };
-    const subscription = Dimensions.addEventListener('change', onChange);
-
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
+  const dimensions = useDimensions();
 
   const hideKeyboard = () => {
     Keyboard.dismiss();
@@ -58,12 +46,16 @@ export const LoginScreen = () => {
     console.log(state);
     hideKeyboard();
     setState(initialState);
+    navigation.navigate('Home');
   };
 
   return (
     <TouchableWithoutFeedback onPress={hideKeyboard}>
       <View style={styles.container}>
-        <ImageBackground source={require('../assets/images/background.jpg')} style={styles.image}>
+        <ImageBackground
+          source={require('../../assets/images/background.jpg')}
+          style={styles.image}
+        >
           <KeyboardAvoidingView
             style={styles.loginWrap}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -122,7 +114,10 @@ export const LoginScreen = () => {
               </View>
               <View style={styles.registerWrap}>
                 <Text style={styles.registerTitle}>Немає акаунту?</Text>
-                <TouchableOpacity activeOpacity={0.7} onPress={hideKeyboard}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => navigation.navigate('Registration')}
+                >
                   <Text style={styles.registerTitle}> Зареєструватись</Text>
                 </TouchableOpacity>
               </View>

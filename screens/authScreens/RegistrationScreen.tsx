@@ -1,22 +1,20 @@
 import {
+  Image,
   ImageBackground,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
-  View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
   TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  KeyboardAvoidingView,
-  Dimensions,
-  Platform,
-  Button,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { AddIcon, DeleteIcon } from '../assets/icons';
+import { AddIcon, DeleteIcon } from '../../assets/icons';
+import { useDimensions } from '../../hooks/useDimensions';
 
 const initialState = {
   login: '',
@@ -31,24 +29,13 @@ enum Fields {
   Password = 'password',
 }
 
-export const RegistrationScreen = () => {
+export const RegistrationScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [isViewPassword, setIsViewPassword] = useState(true);
   const [state, setState] = useState(initialState);
-  const [dimensions, setDimensions] = useState({ width: Dimensions.get('window').width - 15 * 2 });
   const [activeField, setActiveField] = useState<Fields>(null);
 
-  useEffect(() => {
-    const onChange = () => {
-      const width = Dimensions.get('window').width - 15 * 2;
-      setDimensions({ width });
-    };
-    const subscription = Dimensions.addEventListener('change', onChange);
-
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
+  const dimensions = useDimensions();
 
   const hideKeyboard = () => {
     Keyboard.dismiss();
@@ -56,10 +43,19 @@ export const RegistrationScreen = () => {
     setActiveField(null);
   };
 
+  const login = () => navigation.navigate('Login');
+
+  const handleViewPassword = (field: Fields) => {
+    setActiveField(field);
+    setIsShowKeyboard(true);
+    setIsViewPassword(!isViewPassword);
+  };
+
   const submitForm = () => {
     console.log(state);
     hideKeyboard();
     setState(initialState);
+    navigation.navigate('Home');
   };
 
   const handleFocus = (field: Fields) => {
@@ -90,7 +86,7 @@ export const RegistrationScreen = () => {
     <TouchableWithoutFeedback onPress={hideKeyboard}>
       <View style={styles.container}>
         <ImageBackground
-          source={require('../assets/images/background.jpg')}
+          source={require('../../assets/images/background.jpg')}
           style={styles.imageBackground}
         >
           <KeyboardAvoidingView
@@ -166,14 +162,14 @@ export const RegistrationScreen = () => {
                 {isViewPassword ? (
                   <Text
                     style={styles.viewPassword}
-                    onPress={() => setIsViewPassword(!isViewPassword)}
+                    onPress={() => handleViewPassword(Fields.Password)}
                   >
                     Показати
                   </Text>
                 ) : (
                   <Text
                     style={styles.viewPassword}
-                    onPress={() => setIsViewPassword(!isViewPassword)}
+                    onPress={() => handleViewPassword(Fields.Password)}
                   >
                     Приховати
                   </Text>
@@ -186,7 +182,7 @@ export const RegistrationScreen = () => {
               </View>
               <View style={styles.loginWrapper}>
                 <Text style={styles.loginTitle}>Вже є акаунт?</Text>
-                <TouchableOpacity activeOpacity={0.7} onPress={hideKeyboard}>
+                <TouchableOpacity activeOpacity={0.7} onPress={login}>
                   <Text style={styles.loginTitle}> Увійти</Text>
                 </TouchableOpacity>
               </View>
